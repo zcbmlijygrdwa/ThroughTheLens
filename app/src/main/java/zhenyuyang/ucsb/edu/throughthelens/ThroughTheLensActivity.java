@@ -76,12 +76,7 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
 
         mVideoSurface = (TextureView) findViewById(R.id.texture_video_previewer_surface);
         textView_test = (TextView)findViewById(R.id.textView_test);
-        responseTextView = (TextView)findViewById(R.id.responseTextView);
         button_test1 = (Button)findViewById(R.id.button_test1);
-        button_connect_gps_server = (Button)findViewById(R.id.button_connect_gps_server);
-        button_disconnect_gps_server = (Button)findViewById(R.id.button_disconnect_gps_server);
-        addressEditText = (EditText)findViewById(R.id.addressEditText);
-        portEditText = (EditText)findViewById(R.id.portEditText);
 
 
 
@@ -105,52 +100,6 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
                                 }
                             }
                         });
-            }
-        });
-
-
-        button_connect_gps_server.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Toast.makeText(getApplicationContext(), "button_connect_gps_server", Toast.LENGTH_SHORT).show();
-//                gpsSocketClient  = new GPSSocketClient(addressEditText.getText()
-//                        .toString(), Integer.parseInt(portEditText
-//                        .getText().toString()), responseTextView);
-//                gpsSocketClient.execute();
-
-                /*
-                gpsSocketClientIsRunning = true;
-                GSPSocketClientThread =  new Thread(new Runnable() {
-                    public void run() {
-                        while (gpsSocketClientIsRunning) {
-                            // do something in the loop
-                            try
-                            {
-                                Thread.sleep((long)(gpsSocketClientUpdateInterval*1000));
-                                gpsSocketClient  = new GPSSocketClient(addressEditText.getText()
-                                        .toString(), Integer.parseInt(portEditText
-                                        .getText().toString()), responseTextView);
-                                gpsSocketClient.execute();
-                            }
-                            catch (InterruptedException e)
-                            {
-                                // ooops
-                            }
-                        }
-                    }
-                });
-
-                GSPSocketClientThread.start();
-
-                */
-            }
-        });
-
-        button_disconnect_gps_server.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gpsSocketClientIsRunning = false;
-                GSPSocketClientThread.interrupt();
             }
         });
 
