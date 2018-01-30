@@ -1,1 +1,1 @@
-include ':app', ':dJISDKLIB'
+include ':app', ':dJISDKLIB', ':core'

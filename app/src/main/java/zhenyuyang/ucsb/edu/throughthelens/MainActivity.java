@@ -21,6 +21,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
+import com.mygdx.game.MyGdxGame;
+
 import dji.common.product.Model;
 import dji.sdk.airlink.DJILBAirLink;
 import dji.sdk.base.DJIBaseProduct;
@@ -31,8 +34,9 @@ import dji.sdk.products.DJIAircraft;
 import dji.sdk.sdkmanager.DJISDKManager;
 import dji.thirdparty.eventbus.EventBus;
 import zhenyuyang.ucsb.edu.throughthelens.common.DJIApplication;
+import zhenyuyang.ucsb.edu.throughthelens.gdx.GameFragment;
 
-public class MainActivity extends AppCompatActivity implements DJIBaseProduct.DJIVersionCallback{
+public class MainActivity extends AppCompatActivity implements DJIBaseProduct.DJIVersionCallback, AndroidFragmentApplication.Callbacks{
 	private TextView mTextConnectionStatus;
 	private TextView mTextProduct;
 	private TextView mTextModelAvailable;
@@ -88,6 +92,13 @@ public class MainActivity extends AppCompatActivity implements DJIBaseProduct.DJ
 
 		initUI();
 
+
+		        // Create libgdx fragment
+//		GameFragment libgdxFragment = new GameFragment();
+//		// Put it inside the framelayout (which is defined in the layout.xml file).
+//		getSupportFragmentManager().beginTransaction().
+//				add(R.id.content_framelayout2, libgdxFragment).
+//				commit();
 
 	}
 	public void onEventMainThread(int wrapper) {
@@ -274,4 +285,8 @@ public class MainActivity extends AppCompatActivity implements DJIBaseProduct.DJ
 		EventBus.getDefault().unregister(this);
 	}
 
+	@Override
+	public void exit() {
+
+	}
 }

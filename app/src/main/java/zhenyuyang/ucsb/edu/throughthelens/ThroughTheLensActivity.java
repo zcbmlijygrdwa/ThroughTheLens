@@ -10,6 +10,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
+
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
@@ -25,12 +27,13 @@ import dji.sdk.flightcontroller.DJIFlightControllerDelegate;
 import dji.sdk.products.DJIAircraft;
 import dji.sdk.sdkmanager.DJISDKManager;
 import zhenyuyang.ucsb.edu.throughthelens.common.DJIApplication;
+import zhenyuyang.ucsb.edu.throughthelens.gdx.GameFragment;
 
 /**
  * Created by Zhenyu on 2018-01-29.
  */
 
-public class ThroughTheLensActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener{
+public class ThroughTheLensActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener,  AndroidFragmentApplication.Callbacks{
     private TextureView mVideoSurface = null;
     private TextView responseTextView = null;
     private TextView textView_test = null;
@@ -59,6 +62,17 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
         setContentView(R.layout.activity_throught_the_lens);
 
         initUI();
+
+
+
+        //libGDX part
+        // Create libgdx fragment
+        GameFragment libgdxFragment = new GameFragment();
+
+        // Put it inside the framelayout (which is defined in the layout.xml file).
+        getSupportFragmentManager().beginTransaction().
+                add(R.id.content_framelayout, libgdxFragment).
+                commit();
 
     }
 
@@ -225,5 +239,10 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
             buffer.putFloat(value);
         }
         return buffer.array();
+    }
+
+    @Override
+    public void exit() {
+
     }
 }
