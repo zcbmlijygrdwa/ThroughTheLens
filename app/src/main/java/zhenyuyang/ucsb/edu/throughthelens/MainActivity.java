@@ -55,6 +55,11 @@ public class MainActivity extends AppCompatActivity implements DJIBaseProduct.DJ
 	private DJIBaseProduct mProduct;
 
 	private String TAG = "MainActivity";
+
+
+
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
