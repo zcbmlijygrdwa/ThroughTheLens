@@ -56,6 +56,7 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
     private DJIAircraft mAircraft;
     private DJIFlightController mFlightController;
     public static float[] boundingBox = {0,0,0,0};
+    public static float[] localization = new float[3];
     public static StringBuilder builder = new StringBuilder();
 
     private  Thread GSPSocketClientThread;
@@ -114,22 +115,29 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
             @Override
             public void onClick(View v) {
 
-//                mAircraft = (DJIAircraft) DJISDKManager.getInstance().getDJIProduct();
-//                mFlightController = DJIApplication.getAircraftInstance().getFlightController();
-//                byte[] message = FloatArray2ByteArray(DrawBoxView.coordinate);
-//                mFlightController.sendDataToOnboardSDKDevice(message,
-//                        new DJICommonCallbacks.DJICompletionCallback() {
-//                            @Override
-//                            public void onResult(DJIError djiError) {
-//                                if (djiError == null) {
-//                                    Toast.makeText(getApplicationContext(), "Success upstream from Mobile Device to OES", Toast.LENGTH_SHORT).show();
-//                                    //DJIDialog.showDialog(getApplicationContext(),"Success upstream from Mobile Device to OES");
-//                                } else {
-//                                    Toast.makeText(getApplicationContext(), "Error on upstream from Mobile Device to OES. Description:" + djiError.getDescription(), Toast.LENGTH_SHORT).show();
-//                                    //DJIDialog.showDialog(getApplicationContext(), "Error on upstream from Mobile Device to OES. Description:" + djiError.getDescription());
-//                                }
-//                            }
-//                        });
+                mAircraft = (DJIAircraft) DJISDKManager.getInstance().getDJIProduct();
+                mFlightController = DJIApplication.getAircraftInstance().getFlightController();
+
+
+                ApplicationListener applicationListener = Gdx.app.getApplicationListener();
+                myGdxGame =(MyGdxGame) applicationListener;
+                localization = myGdxGame.getLocalization();
+
+                byte[] message = FloatArray2ByteArray(localization);
+
+                mFlightController.sendDataToOnboardSDKDevice(message,
+                        new DJICommonCallbacks.DJICompletionCallback() {
+                            @Override
+                            public void onResult(DJIError djiError) {
+                                if (djiError == null) {
+                                    Toast.makeText(getApplicationContext(), "Success upstream from Mobile Device to OES", Toast.LENGTH_SHORT).show();
+                                    //DJIDialog.showDialog(getApplicationContext(),"Success upstream from Mobile Device to OES");
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Error on upstream from Mobile Device to OES. Description:" + djiError.getDescription(), Toast.LENGTH_SHORT).show();
+                                    //DJIDialog.showDialog(getApplicationContext(), "Error on upstream from Mobile Device to OES. Description:" + djiError.getDescription());
+                                }
+                            }
+                        });
 
 
 
@@ -197,7 +205,7 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
                     for(int i = 0;i<skeleton.length;i++){
                         test+=skeleton[i]+",";
                     }
-                    textView_test.setText("test = "+test);
+                    //textView_test.setText("test = "+test);
 
 
                 }
