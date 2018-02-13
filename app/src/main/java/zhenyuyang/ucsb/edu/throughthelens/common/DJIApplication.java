@@ -11,10 +11,12 @@ import dji.common.error.DJIError;
 import dji.common.error.DJISDKError;
 import dji.sdk.base.DJIBaseComponent;
 import dji.sdk.base.DJIBaseProduct;
+import dji.sdk.camera.DJICamera;
 import dji.sdk.products.DJIAircraft;
 import dji.sdk.products.DJIHandHeld;
 import dji.sdk.sdkmanager.DJIBluetoothProductConnector;
 import dji.sdk.sdkmanager.DJISDKManager;
+import dji.sdk.products.DJIAircraft;
 
 /**
  * Created by Zhenyu on 2018-01-29.
@@ -69,6 +71,22 @@ public class DJIApplication extends Application {
     public static synchronized DJIHandHeld getHandHeldInstance() {
         if (!isHandHeldConnected()) return null;
         return (DJIHandHeld) getProductInstance();
+    }
+
+    public static synchronized DJICamera getCameraInstance() {
+
+        if (getProductInstance() == null) return null;
+
+        DJICamera camera = null;
+
+        if (getProductInstance() instanceof DJIAircraft){
+            camera = ((DJIAircraft) getProductInstance()).getCamera();
+
+        } else if (getProductInstance() instanceof DJIHandHeld) {
+            camera = ((DJIHandHeld) getProductInstance()).getCamera();
+        }
+
+        return camera;
     }
 
     @Override
