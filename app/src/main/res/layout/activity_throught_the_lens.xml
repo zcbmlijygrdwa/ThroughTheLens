@@ -38,13 +38,35 @@
                 android:id="@+id/textView_test"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:text=" " />
 
-            <Button
-                android:id="@+id/button_test1"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Button" />
+                android:orientation="horizontal" >
+                <Button
+                    android:id="@+id/button_video"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:background="@color/startRecord"
+                    android:text="Record" />
+
+                <Button
+                    android:id="@+id/button_previeWayPoint"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="previewWP" />
+
+                <Button
+                    android:id="@+id/button_sendWayPoint"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="sendWP" />
+            </LinearLayout>
+
 
             <FrameLayout
                 android:id="@+id/content_framelayout"

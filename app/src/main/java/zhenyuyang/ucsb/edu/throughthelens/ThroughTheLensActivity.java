@@ -45,9 +45,9 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
     private TextView textView_test = null;
     private EditText addressEditText = null;
     private EditText portEditText = null;
-    private Button button_test1 = null;
-    private Button button_connect_gps_server = null;
-    private Button button_disconnect_gps_server = null;
+    private Button button_sendWayPoint = null;
+    private Button button_previewWayPoint = null;
+    private Button button_video = null;
 
     private DJICamera.CameraReceivedVideoDataCallback mReceivedVideoDataCallback = null;
     private DJILBAirLink.DJIOnReceivedVideoCallback mOnReceivedVideoCallback = null;
@@ -106,12 +106,12 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
 
         mVideoSurface = (TextureView) findViewById(R.id.texture_video_previewer_surface);
         textView_test = (TextView)findViewById(R.id.textView_test);
-        button_test1 = (Button)findViewById(R.id.button_test1);
-
-
+        button_sendWayPoint = (Button)findViewById(R.id.button_sendWayPoint);
+        button_previewWayPoint = (Button)findViewById(R.id.button_previeWayPoint);
+        button_video = (Button)findViewById(R.id.button_video);
 
         //register button listeners
-        button_test1.setOnClickListener(new View.OnClickListener() {
+        button_sendWayPoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -138,12 +138,24 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
                                 }
                             }
                         });
+            }
+        });
 
 
-
+        button_previewWayPoint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
             }
         });
+
+        button_video.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
 
         if (null != mVideoSurface) {
             mVideoSurface.setSurfaceTextureListener(this);

@@ -97,7 +97,7 @@ public class DrawBoxView extends View {
         mPaint.setTextSize(40);
         mPaint.setStrokeWidth(3.0f);
         mPaint.setColor(Color.BLUE);
-        canvas.drawText(Integer.toString(i) + ". data:" + ThroughTheLensActivity.builder.toString(),200, 200, mPaint);
+        //canvas.drawText(Integer.toString(i) + ". data:" + ThroughTheLensActivity.builder.toString(),200, 200, mPaint);
         //setResultToToast(getContext(), "data BaseFpvView.boundingBox[0]: " + BaseThreeBtnView.boundingBox[0]);
 
     }
