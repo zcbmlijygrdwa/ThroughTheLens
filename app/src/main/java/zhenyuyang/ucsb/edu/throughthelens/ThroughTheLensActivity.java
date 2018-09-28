@@ -5,6 +5,7 @@ import android.content.res.AssetFileDescriptor;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
@@ -200,6 +201,7 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
                             runOnUiThread (new Thread(new Runnable() {
                                 public void run() {
                                     textView_test.setText(time);
+                                    //Log.i("UI","setTime");
                                 }
                             }));
                             ApplicationListener applicationListener = Gdx.app.getApplicationListener();
@@ -211,7 +213,7 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
                             else{
                                 timeCounter = 0;
                             }
-                            System.out.println(" timeCounter = "+timeCounter);
+
                         }
                     }, 0, 1);
 

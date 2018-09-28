@@ -39,39 +39,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <meta-data
-            android:name="com.dji.sdk.API_KEY"
-            android:value="49b027dc2a6fd3bf059fd281" />
 
-
-
-        <service android:name="dji.sdk.sdkmanager.DJIGlobalService" />
-        <service android:name="dji.internal.geofeature.flyforbid.FlyforbidUpdateService" />
-
-        <!-- Required for receiving GEO system pushing. -->
-        <service android:name="dji.sdk.sdkmanager.GeoSyncFileService" />
-
-        <!--
-             Required for receiving accessory attachment events.
-            This is necessary for product when connecting over USB.
-        -->
-
-
-        <!--
-    Required for receiving accessory attachment events.
-    This is necessary for product when connecting over USB.
-        -->
-        <activity
-            android:name="dji.sdk.sdkmanager.DJIAoaControllerActivity"
-            android:theme="@android:style/Theme.Translucent">
-            <intent-filter>
-                <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
-                android:resource="@xml/accessory_filter" />
-        </activity>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
