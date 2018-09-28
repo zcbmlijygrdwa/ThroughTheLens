@@ -14,7 +14,7 @@ import android.widget.Toast;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
-import com.mygdx.game.MyGdxGame;
+//import com.mygdx.game.MyGdxGame;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -82,7 +82,7 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
     private float gpsSocketClientUpdateInterval = 0.5f;  //seconds
 
     float[] skeleton = new float[42];
-    MyGdxGame myGdxGame;
+    MyGdxGame2 myGdxGame;
 
 
 
@@ -151,7 +151,7 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
 
 
                 ApplicationListener applicationListener = Gdx.app.getApplicationListener();
-                myGdxGame =(MyGdxGame) applicationListener;
+                myGdxGame =(MyGdxGame2) applicationListener;
                 localization = myGdxGame.getLocalization();
 
                 float[] messageToSend = new float[4];
@@ -188,7 +188,7 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
 
 
                 ApplicationListener applicationListener = Gdx.app.getApplicationListener();
-                myGdxGame =(MyGdxGame) applicationListener;
+                myGdxGame =(MyGdxGame2) applicationListener;
                 localization = myGdxGame.getLocalization();
 
                 float[] messageToSend = new float[4];
@@ -370,7 +370,7 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
                 if(dataTemp[0]<0){
 
                     ApplicationListener applicationListener = Gdx.app.getApplicationListener();
-                    myGdxGame =(MyGdxGame) applicationListener;
+                    myGdxGame =(MyGdxGame2) applicationListener;
                     myGdxGame.setData(skeleton);
 
                     //textView_test.setText("data = "+data.toString());
