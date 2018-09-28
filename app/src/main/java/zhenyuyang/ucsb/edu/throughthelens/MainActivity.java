@@ -36,7 +36,7 @@ import dji.thirdparty.eventbus.EventBus;
 import zhenyuyang.ucsb.edu.throughthelens.common.DJIApplication;
 import zhenyuyang.ucsb.edu.throughthelens.gdx.GameFragment;
 
-public class MainActivity extends AppCompatActivity implements DJIBaseProduct.DJIVersionCallback, AndroidFragmentApplication.Callbacks{
+public class MainActivity extends AppCompatActivity implements AndroidFragmentApplication.Callbacks{
 	private TextView mTextConnectionStatus;
 	private TextView mTextProduct;
 	private TextView mTextModelAvailable;
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements DJIBaseProduct.DJ
 		}
 
 
-		EventBus.getDefault().register(this);
+		//EventBus.getDefault().register(this);
 
 
 		initUI();
@@ -116,44 +116,6 @@ public class MainActivity extends AppCompatActivity implements DJIBaseProduct.DJ
 		mTextModelAvailable = (TextView) findViewById(R.id.text_model_available);
 		mTextProduct = (TextView) findViewById(R.id.text_product_info);
 		mBtnOpen = (Button) findViewById(R.id.btn_open);
-		//mBtnBluetooth = (Button) findViewById(R.id.btn_bluetooth);
-		//mBtnBluetooth.setEnabled(false);
-//        mHandlerThread.start();
-//        final long currentTime = System.currentTimeMillis();
-//        mHandler = new Handler(mHandlerThread.getLooper()){
-//            @Override
-//            public void handleMessage(Message msg){
-//                switch(msg.what){
-//                    case 0:
-//                        //connected = DJISampleApplication.getBluetoothConnectStatus();
-//                        //connector = DJISDKManager.getInstance().getDJIBluetoothProductConnector();
-//                        connector = DJIApplication.getBluetoothProductConnector();
-//
-//                        if(connector != null){
-//                            Toast.makeText(getApplicationContext(), "mBtnBluetooth connector != null", Toast.LENGTH_SHORT).show();
-////                            mBtnBluetooth.post(new Runnable() {
-////                                @Override
-////                                public void run() {
-////                                    mBtnBluetooth.setEnabled(true);
-////                                }
-////                            });
-//                            return;
-//                        }else if((System.currentTimeMillis()-currentTime)>=5000){
-//                            //DJIDialog.showDialog(getContext(),"Fetch Connector failed, reboot if you want to connect the Bluetooth");
-//                            Toast.makeText(getApplicationContext(), "Fetch Connector failed, reboot if you want to connect the Bluetooth", Toast.LENGTH_SHORT).show();
-//                            return;
-//                        }else if(connector == null){
-//                            sendEmptyMessageDelayed(0, 100);
-//                        }
-//                        break;
-//                    case 1:
-//                        break;
-//                    case 2:
-//                        break;
-//                }
-//            }
-//        };
-//        mHandler.sendEmptyMessage(0);
 
 
 		mBtnOpen.setOnClickListener(new View.OnClickListener() {
@@ -198,30 +160,31 @@ public class MainActivity extends AppCompatActivity implements DJIBaseProduct.DJ
 	}
 
 
-	private void refreshSDKRelativeUI() {
-		mProduct = DJIApplication.getProductInstance();
-		//mProduct = DJISDKManager.getInstance().getDJIProduct();
-		Log.d(TAG, "mProduct: " + (mProduct == null? "null" : "unnull") );
-		if (null != mProduct && mProduct.isConnected()) {
-			mBtnOpen.setEnabled(true);
-
-			String str = mProduct instanceof DJIAircraft ? "DJIAircraft" : "DJIHandHeld";
-			mTextConnectionStatus.setText("Status: " + str + " connected");
-			mProduct.setDJIVersionCallback(this);
-			updateVersion();
-
-			if (null != mProduct.getModel()) {
-				mTextProduct.setText("" + mProduct.getModel().getDisplayName());
-			} else {
-				mTextProduct.setText("Model not recognized");
-			}
-		} else {
-			mBtnOpen.setEnabled(false);
-
-			mTextProduct.setText("Model not recognized");
-			mTextConnectionStatus.setText("connection_loose");
-		}
-	}
+//	private void refreshSDKRelativeUI() {
+//		mProduct = DJIApplication.getProductInstance();
+//		//mProduct = DJISDKManager.getInstance().getDJIProduct();
+//		Log.d(TAG, "mProduct: " + (mProduct == null? "null" : "unnull") );
+//		if (null != mProduct && mProduct.isConnected()) {
+//			mBtnOpen.setEnabled(true);
+//
+//			String str = mProduct instanceof DJIAircraft ? "DJIAircraft" : "DJIHandHeld";
+//			mTextConnectionStatus.setText("Status: " + str + " connected");
+//			mProduct.setDJIVersionCallback(this);
+//			updateVersion();
+//
+//			if (null != mProduct.getModel()) {
+//				mTextProduct.setText("" + mProduct.getModel().getDisplayName());
+//			} else {
+//				mTextProduct.setText("Model not recognized");
+//			}
+//		} else {
+//			//mBtnOpen.setEnabled(false);
+//			mBtnOpen.setEnabled(true);
+//
+//			mTextProduct.setText("Model not recognized, demo mode available");
+//			mTextConnectionStatus.setText("connection_loose");
+//		}
+//	}
 	private void updateVersion() {
 		String version = null;
 		if(mProduct != null) {
@@ -257,28 +220,28 @@ public class MainActivity extends AppCompatActivity implements DJIBaseProduct.DJ
 		return super.onOptionsItemSelected(item);
 	}
 
-	@Override
-	public void onProductVersionChange(String s, String s1) {
-		updateVersion();
-	}
-	protected BroadcastReceiver mReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			Log.d(TAG, "Comes into the BroadcastReceiver");
-			refreshSDKRelativeUI();
-		}
-
-	};
+//	@Override
+//	public void onProductVersionChange(String s, String s1) {
+//		updateVersion();
+//	}
+//	protected BroadcastReceiver mReceiver = new BroadcastReceiver() {
+//
+//		@Override
+//		public void onReceive(Context context, Intent intent) {
+//			Log.d(TAG, "Comes into the BroadcastReceiver");
+//			//refreshSDKRelativeUI();
+//		}
+//
+//	};
 
 
 	@Override
 	public void onResume(){
 		super.onResume();
-		refreshSDKRelativeUI();
-		IntentFilter filter = new IntentFilter();
-		filter.addAction(DJIApplication.FLAG_CONNECTION_CHANGE);
-		getApplicationContext().registerReceiver(mReceiver, filter);
+		//refreshSDKRelativeUI();
+		//IntentFilter filter = new IntentFilter();
+		//filter.addAction(DJIApplication.FLAG_CONNECTION_CHANGE);
+		//getApplicationContext().registerReceiver(mReceiver, filter);
 
 	}
 
@@ -286,8 +249,8 @@ public class MainActivity extends AppCompatActivity implements DJIBaseProduct.DJ
 	@Override
 	public void onPause(){
 		super.onPause();
-		getApplicationContext().unregisterReceiver(mReceiver);
-		EventBus.getDefault().unregister(this);
+		//getApplicationContext().unregisterReceiver(mReceiver);
+		//EventBus.getDefault().unregister(this);
 	}
 
 	@Override

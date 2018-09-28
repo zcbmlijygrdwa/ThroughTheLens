@@ -1,6 +1,7 @@
 package zhenyuyang.ucsb.edu.throughthelens;
 
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,10 +15,15 @@ import android.widget.Toast;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
-//import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.MyGdxGame;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -37,7 +43,7 @@ import dji.sdk.products.DJIAircraft;
 import dji.sdk.sdkmanager.DJISDKManager;
 import zhenyuyang.ucsb.edu.throughthelens.common.DJIApplication;
 import zhenyuyang.ucsb.edu.throughthelens.gdx.GameFragment;
-import zhenyuyang.ucsb.edu.throughthelens.gdx.MyGdxGame2;
+//import zhenyuyang.ucsb.edu.throughthelens.gdx.MyGdxGame2;
 import zhenyuyang.ucsb.edu.throughthelens.utils.DJIModuleVerificationUtil;
 
 
@@ -59,7 +65,7 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
     private Button button_video = null;
 
     Timer timer = new Timer();
-    private long timeCounter = 0;
+    private int timeCounter = 0;
     private long hours = 0;
     private long minutes = 0;
     private long seconds = 0;
@@ -82,7 +88,8 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
     private float gpsSocketClientUpdateInterval = 0.5f;  //seconds
 
     float[] skeleton = new float[42];
-    MyGdxGame2 myGdxGame;
+    ArrayList<float[]> skeletonSet = new ArrayList<>();
+    MyGdxGame myGdxGame;
 
 
 
@@ -93,7 +100,39 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
 
         initUI();
 
+        //load skeleton data
+        String file = "norm_skt.txt";
+        try {
+            System.out.println("trying read");
+            BufferedReader br = new BufferedReader(new InputStreamReader(getAssets().open(file)));
+            String line;
+            while ((line = br.readLine()) != null) {
+                // process the line.
+                //System.out.println("line[] = "+line);
+                String[] splited = line.split("\\s+");
+                float[] tempSkeleton = new float[42];
+                //System.out.println("splited.length = "+splited.length);
+                //System.out.println("tempSkeleton.length = "+tempSkeleton.length);
+                if(tempSkeleton.length==splited.length){
+                    for(int i = 0 ; i < tempSkeleton.length;i++){
+                        tempSkeleton[i] = Float.parseFloat((splited[i]));
+                    }
+                    skeletonSet.add(tempSkeleton);
+                }
 
+//                ApplicationListener applicationListener = Gdx.app.getApplicationListener();
+//                myGdxGame =(MyGdxGame) applicationListener;
+//                myGdxGame.setData(skeleton);
+
+            }
+            System.out.println("skeletonSet.size() = "+skeletonSet.size());
+
+
+        }
+        catch(IOException e){
+            System.out.println("Reading txt Error: "+e.toString());
+            return;
+        }
 
         //libGDX part
         // Create libgdx fragment
@@ -104,36 +143,12 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
         getSupportFragmentManager().beginTransaction().
                 add(R.id.content_framelayout, libgdxFragment).
                 commit();
-
-
-
-        //for camera recording
-        DJICamera camera = DJIApplication.getCameraInstance();
-        if (DJIModuleVerificationUtil.isCameraModuleAvailable()) {
-            DJIApplication.getProductInstance().getCamera().setCameraMode(
-                    DJICameraSettingsDef.CameraMode.RecordVideo,
-                    new DJICommonCallbacks.DJICompletionCallback() {
-                        @Override
-                        public void onResult(DJIError djiError) {
-                            //Utils.setResultToToast(getContext(), "SetCameraMode to recordVideo");
-                            Toast.makeText(getApplicationContext(), "SetCameraMode to recordVideo, error = "+djiError, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-            );
-        }
     }
 
 
 
 
     private void initUI() {
-//        LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Service.LAYOUT_INFLATER_SERVICE);
-//
-//        View content = layoutInflater.inflate(R.layout.view_fpv_display, null, false);
-//        addView(content, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-//                ViewGroup.LayoutParams.MATCH_PARENT));
-//
-//        Log.v("TAG","Start to test");
 
         mVideoSurface = (TextureView) findViewById(R.id.texture_video_previewer_surface);
         textView_test = (TextView)findViewById(R.id.textView_test);
@@ -146,36 +161,6 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
             @Override
             public void onClick(View v) {
 
-                mAircraft = (DJIAircraft) DJISDKManager.getInstance().getDJIProduct();
-                mFlightController = DJIApplication.getAircraftInstance().getFlightController();
-
-
-                ApplicationListener applicationListener = Gdx.app.getApplicationListener();
-                myGdxGame =(MyGdxGame2) applicationListener;
-                localization = myGdxGame.getLocalization();
-
-                float[] messageToSend = new float[4];
-                messageToSend[0] = localization[0];
-                messageToSend[1] = localization[1];
-                messageToSend[2] = localization[2];
-                messageToSend[3] = 1;
-
-
-                byte[] message = FloatArray2ByteArray(messageToSend);
-
-                mFlightController.sendDataToOnboardSDKDevice(message,
-                        new DJICommonCallbacks.DJICompletionCallback() {
-                            @Override
-                            public void onResult(DJIError djiError) {
-                                if (djiError == null) {
-                                    Toast.makeText(getApplicationContext(), "Success upstream from Mobile Device to OES", Toast.LENGTH_SHORT).show();
-                                    //DJIDialog.showDialog(getApplicationContext(),"Success upstream from Mobile Device to OES");
-                                } else {
-                                    Toast.makeText(getApplicationContext(), "Error on upstream from Mobile Device to OES. Description:" + djiError.getDescription(), Toast.LENGTH_SHORT).show();
-                                    //DJIDialog.showDialog(getApplicationContext(), "Error on upstream from Mobile Device to OES. Description:" + djiError.getDescription());
-                                }
-                            }
-                        });
             }
         });
 
@@ -183,36 +168,7 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
         button_previewWayPoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAircraft = (DJIAircraft) DJISDKManager.getInstance().getDJIProduct();
-                mFlightController = DJIApplication.getAircraftInstance().getFlightController();
 
-
-                ApplicationListener applicationListener = Gdx.app.getApplicationListener();
-                myGdxGame =(MyGdxGame2) applicationListener;
-                localization = myGdxGame.getLocalization();
-
-                float[] messageToSend = new float[4];
-                messageToSend[0] = localization[0];
-                messageToSend[1] = localization[1];
-                messageToSend[2] = localization[2];
-                messageToSend[3] = -1;
-
-
-                byte[] message = FloatArray2ByteArray(messageToSend);
-
-                mFlightController.sendDataToOnboardSDKDevice(message,
-                        new DJICommonCallbacks.DJICompletionCallback() {
-                            @Override
-                            public void onResult(DJIError djiError) {
-                                if (djiError == null) {
-                                    Toast.makeText(getApplicationContext(), "Success upstream from Mobile Device to OES", Toast.LENGTH_SHORT).show();
-                                    //DJIDialog.showDialog(getApplicationContext(),"Success upstream from Mobile Device to OES");
-                                } else {
-                                    Toast.makeText(getApplicationContext(), "Error on upstream from Mobile Device to OES. Description:" + djiError.getDescription(), Toast.LENGTH_SHORT).show();
-                                    //DJIDialog.showDialog(getApplicationContext(), "Error on upstream from Mobile Device to OES. Description:" + djiError.getDescription());
-                                }
-                            }
-                        });
             }
         });
 
@@ -221,96 +177,62 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
             public void onClick(View v) {
 
                 if(!isCameraRecording){
-                    //Utils.setResultToText(context, mTexInfo, "00:00:00");
+//Utils.setResultToText(context, mTexInfo, "00:00:00");
                     textView_test.setText("00:00:00");
-                    if (DJIModuleVerificationUtil.isCameraModuleAvailable()) {
-                        Toast.makeText(getApplicationContext(), "CameraModuleAvailable", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Start record", Toast.LENGTH_SHORT).show();
+                    runOnUiThread (new Thread(new Runnable() {
+                        public void run() {
+                            button_video.setBackgroundResource(R.color.endRecord);
+                            button_video.setText("STOP");
+                        }
+                    }));
+                    isCameraRecording = true;
+                    timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
 
-                        DJIApplication.getProductInstance().getCamera().getCameraMode(new DJICommonCallbacks.DJICompletionCallbackWith<DJICameraSettingsDef.CameraMode>() {
-                            @Override
-                            public void onSuccess(DJICameraSettingsDef.CameraMode cameraMode) {
-                                Toast.makeText(getApplicationContext(), "cameraMode: "+cameraMode.toString(), Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void onFailure(DJIError djiError) {
-
-                            }
-                        });
-
-
-
-                        DJIApplication.getProductInstance().getCamera().startRecordVideo(
-                                new DJICommonCallbacks.DJICompletionCallback() {
-                                    @Override
-                                    public void onResult(DJIError djiError) {
-                                        final DJIError error = djiError;
-                                        //success so, start recording
-                                        if (null == djiError) {
-                                            //Utils.setResultToToast(getContext(), "Start record");
-                                            Toast.makeText(getApplicationContext(), "Start record", Toast.LENGTH_SHORT).show();
-                                            runOnUiThread (new Thread(new Runnable() {
-                                                public void run() {
-                                                    button_video.setBackgroundResource(R.color.endRecord);
-                                                    button_video.setText("STOP");
-                                                }
-                                            }));
-                                            isCameraRecording = true;
-                                            timer = new Timer();
-                                            timer.schedule(new TimerTask() {
-                                                @Override
-                                                public void run() {
-                                                    timeCounter = timeCounter + 1;
-                                                    hours = TimeUnit.MILLISECONDS.toHours(timeCounter);
-                                                    minutes = TimeUnit.MILLISECONDS.toMinutes(timeCounter) - (hours * 60);
-                                                    seconds = TimeUnit.MILLISECONDS.toSeconds(timeCounter) - ((hours * 60 * 60) + (minutes * 60));
-                                                    time = String.format("%02d:%02d:%02d", hours, minutes, seconds);
-                                                    //Utils.setResultToText(context, mTexInfo, time);
-                                                    runOnUiThread (new Thread(new Runnable() {
-                                                        public void run() {
-                                                            textView_test.setText(time);
-                                                        }
-                                                    }));
-                                                }
-                                            }, 0, 1);
-                                        }
-                                        else{
-                                            runOnUiThread (new Thread(new Runnable() {
-                                                public void run() {
-                                                    textView_test.setText("djiError = "+error+" :"+error.getDescription());
-                                                }
-                                            }));
-                                        }
-
-                                    }
+                            hours = TimeUnit.MILLISECONDS.toHours(timeCounter);
+                            minutes = TimeUnit.MILLISECONDS.toMinutes(timeCounter) - (hours * 60);
+                            seconds = TimeUnit.MILLISECONDS.toSeconds(timeCounter) - ((hours * 60 * 60) + (minutes * 60));
+                            time = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+                            //Utils.setResultToText(context, mTexInfo, time);
+                            runOnUiThread (new Thread(new Runnable() {
+                                public void run() {
+                                    textView_test.setText(time);
                                 }
-                        );
-                    }
+                            }));
+                            ApplicationListener applicationListener = Gdx.app.getApplicationListener();
+                            myGdxGame =(MyGdxGame) applicationListener;
+                            myGdxGame.setData(skeletonSet.get(timeCounter));
+                            if(timeCounter+1!=skeletonSet.size()){
+                                timeCounter = timeCounter + 1;
+                            }
+                            else{
+                                timeCounter = 0;
+                            }
+                            System.out.println(" timeCounter = "+timeCounter);
+                        }
+                    }, 0, 1);
+
+
+
                 }
                 else{
                     //stop recording
-                    if (DJIModuleVerificationUtil.isCameraModuleAvailable()) {
-                        DJIApplication.getProductInstance().getCamera().stopRecordVideo(
-                                new DJICommonCallbacks.DJICompletionCallback() {
-                                    @Override
-                                    public void onResult(DJIError djiError) {
-                                        //Utils.setResultToToast(getContext(), "StopRecord");
-                                        Toast.makeText(getApplicationContext(), "Stop Record", Toast.LENGTH_SHORT).show();
-                                        isCameraRecording = false;
-                                        //Utils.setResultToText(context, mTexInfo, "00:00:00");
-                                        runOnUiThread (new Thread(new Runnable() {
-                                            public void run() {
-                                                textView_test.setText("00:00:00");
-                                                button_video.setBackgroundResource(R.color.startRecord);
-                                                button_video.setText("RECORD");
-                                            }
-                                        }));
-                                        timer.cancel();
-                                        timeCounter = 0;
-                                    }
-                                }
-                        );
-                    }
+                    //Utils.setResultToToast(getContext(), "StopRecord");
+                    Toast.makeText(getApplicationContext(), "Stop Record", Toast.LENGTH_SHORT).show();
+                    isCameraRecording = false;
+                    //Utils.setResultToText(context, mTexInfo, "00:00:00");
+                    runOnUiThread (new Thread(new Runnable() {
+                        public void run() {
+                            textView_test.setText("00:00:00");
+                            button_video.setBackgroundResource(R.color.startRecord);
+                            button_video.setText("RECORD");
+                        }
+                    }));
+                    timer.cancel();
+                    timeCounter = 0;
 
                 }
                 }
@@ -340,51 +262,51 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
                 }
             };
         }
-        initSDKCallback();
+        //initSDKCallback();
 
 
 
 
-        DJIAircraft mAircraft = (DJIAircraft) DJISDKManager.getInstance().getDJIProduct();
-        DJIFlightController mFlightController = mAircraft.getFlightController();
-        mFlightController.setReceiveExternalDeviceDataCallback(new DJIFlightControllerDelegate.FlightControllerReceivedDataFromExternalDeviceCallback() {
-            @Override
-            public void onResult(byte[] data) {
-                float[] dataTemp = toFloatArray(data);
-
-                if(dataTemp[0]>0){
-                    for(int i = 1;i<22;i++){
-                        skeleton[i-1] = dataTemp[i];
-                    }
-                }
-                else{
-                    for(int i = 1;i<22;i++){
-                        skeleton[21+i-1] = dataTemp[i];
-                    }
-                }
-
-
-
-
-//                ((EditText)findViewById(R.id.debug)).setText("data = "+builder.toString());
-                if(dataTemp[0]<0){
-
-                    ApplicationListener applicationListener = Gdx.app.getApplicationListener();
-                    myGdxGame =(MyGdxGame2) applicationListener;
-                    myGdxGame.setData(skeleton);
-
-                    //textView_test.setText("data = "+data.toString());
-                    String test = "";
-                    for(int i = 0;i<skeleton.length;i++){
-                        test+=skeleton[i]+",";
-                    }
-                    //textView_test.setText("test = "+test);
-
-
-                }
-
-            }
-        });
+//        DJIAircraft mAircraft = (DJIAircraft) DJISDKManager.getInstance().getDJIProduct();
+//        DJIFlightController mFlightController = mAircraft.getFlightController();
+//        mFlightController.setReceiveExternalDeviceDataCallback(new DJIFlightControllerDelegate.FlightControllerReceivedDataFromExternalDeviceCallback() {
+//            @Override
+//            public void onResult(byte[] data) {
+//                float[] dataTemp = toFloatArray(data);
+//
+//                if(dataTemp[0]>0){
+//                    for(int i = 1;i<22;i++){
+//                        skeleton[i-1] = dataTemp[i];
+//                    }
+//                }
+//                else{
+//                    for(int i = 1;i<22;i++){
+//                        skeleton[21+i-1] = dataTemp[i];
+//                    }
+//                }
+//
+//
+//
+//
+////                ((EditText)findViewById(R.id.debug)).setText("data = "+builder.toString());
+//                if(dataTemp[0]<0){
+//
+//                    ApplicationListener applicationListener = Gdx.app.getApplicationListener();
+//                    myGdxGame =(MyGdxGame) applicationListener;
+//                    myGdxGame.setData(skeleton);
+//
+//                    //textView_test.setText("data = "+data.toString());
+//                    String test = "";
+//                    for(int i = 0;i<skeleton.length;i++){
+//                        test+=skeleton[i]+",";
+//                    }
+//                    //textView_test.setText("test = "+test);
+//
+//
+//                }
+//
+//            }
+//        });
     }
 
     private void initSDKCallback() {

@@ -93,13 +93,13 @@ public class DJIApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        mHandler = new Handler(Looper.getMainLooper());
-        Toast.makeText(getApplicationContext(), "Comes into the initSDKManager", Toast.LENGTH_SHORT).show();
+        //mHandler = new Handler(Looper.getMainLooper());
+        //Toast.makeText(getApplicationContext(), "Comes into the initSDKManager", Toast.LENGTH_SHORT).show();
         /**
          * handles SDK Registration using the API_KEY
          */
-        Log.d("Alex", "Comes into the initSDKManager");
-        DJISDKManager.getInstance().initSDKManager(this, mDJISDKManagerCallback);
+        //Log.d("Alex", "Comes into the initSDKManager");
+        //DJISDKManager.getInstance().initSDKManager(this, mDJISDKManagerCallback);
     }
 
     private DJISDKManager.DJISDKManagerCallback mDJISDKManagerCallback = new DJISDKManager.DJISDKManagerCallback() {
@@ -128,10 +128,10 @@ public class DJIApplication extends Application {
         public void onProductChanged(DJIBaseProduct oldProduct, DJIBaseProduct newProduct) {
 
             Log.d("Alex", String.format("onProductChanged oldProduct:%s, newProduct:%s", oldProduct, newProduct));
-            mProduct = newProduct;
-            if(mProduct != null) {
-                mProduct.setDJIBaseProductListener(mDJIBaseProductListener);
-            }
+//            mProduct = newProduct;
+//            if(mProduct != null) {
+//                mProduct.setDJIBaseProductListener(mDJIBaseProductListener);
+//            }
 
             notifyStatusChange();
         }
@@ -170,16 +170,16 @@ public class DJIApplication extends Application {
         };
 
         private void notifyStatusChange() {
-            mHandler.removeCallbacks(updateRunnable);
-            mHandler.postDelayed(updateRunnable, 500);
+            //mHandler.removeCallbacks(updateRunnable);
+            //mHandler.postDelayed(updateRunnable, 500);
         }
 
         private Runnable updateRunnable = new Runnable() {
 
             @Override
             public void run() {
-                Intent intent = new Intent(FLAG_CONNECTION_CHANGE);
-                sendBroadcast(intent);
+                //Intent intent = new Intent(FLAG_CONNECTION_CHANGE);
+                //sendBroadcast(intent);
             }
         };
     };
