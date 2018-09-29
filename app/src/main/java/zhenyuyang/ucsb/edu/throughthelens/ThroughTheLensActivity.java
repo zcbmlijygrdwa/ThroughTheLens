@@ -133,11 +133,6 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
                     }
                     skeletonSet.add(tempSkeleton);
                 }
-
-//                ApplicationListener applicationListener = Gdx.app.getApplicationListener();
-//                myGdxGame =(MyGdxGame) applicationListener;
-//                myGdxGame.setData(skeleton);
-
             }
             System.out.println("skeletonSet.size() = "+skeletonSet.size());
 
@@ -165,23 +160,6 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
     private void initUI() {
 
         mVideoSurface = (TextureView) findViewById(R.id.video_view_surface);
-//        //Video Loop
-//        mVideoSurface.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//            public void onCompletion(MediaPlayer mp) {
-//                mVideoSurface.start(); //need to make transition seamless.
-//            }
-//        });
-//
-//
-//
-//        //Uri uri = Uri.fromFile(new File("//assets/big_buck_bunny.mp4"));
-//        //mVideoSurface.setVideoURI(uri);
-//        mVideoSurface.setVideoURI(Uri.parse(Uri.decode("http://zhenyuyang.usite.pro/testVideo.mp4")));
-//
-//        mVideoSurface.requestFocus();
-//        mVideoSurface.start();
-
-
         textView_test = (TextView)findViewById(R.id.textView_test);
         button_sendWayPoint = (Button)findViewById(R.id.button_sendWayPoint);
         button_previewWayPoint = (Button)findViewById(R.id.button_previeWayPoint);
@@ -234,15 +212,6 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
                                     //Log.i("UI","setTime");
                                 }
                             }));
-//                            ApplicationListener applicationListener = Gdx.app.getApplicationListener();
-//                            myGdxGame =(MyGdxGame) applicationListener;
-//                            myGdxGame.setData(skeletonSet.get(timeCounter));
-//                            if(timeCounter+1!=skeletonSet.size()){
-//                                timeCounter = timeCounter + 1;
-//                            }
-//                            else{
-//                                timeCounter = 0;
-//                            }
 
                         }
                     }, 0, 1);
@@ -362,20 +331,6 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
         //videoFrameCount++;
         try {
-            //Utils.setResultToToast(getContext(), "tsurface = "+surface.getTimestamp());
-
-//            int p = mVideoSurface.getBitmap().getPixel(200,200);
-//
-//            int R = (p >> 16) & 0xff;
-//            int G = (p >> 8) & 0xff;
-//            int B = p & 0xff;
-            //textView_test.setText("R = "+R+", G = "+G+", B = "+B);
-            //setResultToToast(getContext(), "mVideoSurface = "+mVideoSurface);
-
-            //Log.i("video","onSurfaceTextureUpdated");
-
-
-
             ApplicationListener applicationListener = Gdx.app.getApplicationListener();
             myGdxGame =(MyGdxGame) applicationListener;
             if(frameCount<skeletonSet.size()){

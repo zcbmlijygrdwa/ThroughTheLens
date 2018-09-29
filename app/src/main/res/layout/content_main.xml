@@ -35,7 +35,7 @@
         android:id="@+id/text_model_available"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="text_model_available" />
+        android:text="test_model_available" />
 
     <Button
         android:id="@+id/btn_open"
