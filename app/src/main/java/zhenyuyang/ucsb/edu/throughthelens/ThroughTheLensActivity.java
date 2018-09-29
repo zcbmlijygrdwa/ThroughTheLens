@@ -83,6 +83,8 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
     String time = "";
     boolean isCameraRecording = false;
 
+    private int frameCount = 0;
+
     private DJICamera.CameraReceivedVideoDataCallback mReceivedVideoDataCallback = null;
     private DJILBAirLink.DJIOnReceivedVideoCallback mOnReceivedVideoCallback = null;
     private DJICodecManager mCodecManager = null;
@@ -232,15 +234,15 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
                                     //Log.i("UI","setTime");
                                 }
                             }));
-                            ApplicationListener applicationListener = Gdx.app.getApplicationListener();
-                            myGdxGame =(MyGdxGame) applicationListener;
-                            myGdxGame.setData(skeletonSet.get(timeCounter));
-                            if(timeCounter+1!=skeletonSet.size()){
-                                timeCounter = timeCounter + 1;
-                            }
-                            else{
-                                timeCounter = 0;
-                            }
+//                            ApplicationListener applicationListener = Gdx.app.getApplicationListener();
+//                            myGdxGame =(MyGdxGame) applicationListener;
+//                            myGdxGame.setData(skeletonSet.get(timeCounter));
+//                            if(timeCounter+1!=skeletonSet.size()){
+//                                timeCounter = timeCounter + 1;
+//                            }
+//                            else{
+//                                timeCounter = 0;
+//                            }
 
                         }
                     }, 0, 1);
@@ -321,6 +323,7 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
             mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
+                    frameCount = 0;
                     mp.start();
                 }
             });
@@ -369,13 +372,23 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
             //textView_test.setText("R = "+R+", G = "+G+", B = "+B);
             //setResultToToast(getContext(), "mVideoSurface = "+mVideoSurface);
 
-            Log.i("video","onSurfaceTextureUpdated");
+            //Log.i("video","onSurfaceTextureUpdated");
 
 
 
-            //b = mVideoSurface.getBitmap();
-            //            tmpMAT = new Mat (b.getWidth(), b.getHeight(), CvType.CV_8UC1);  //something is null here....
+            ApplicationListener applicationListener = Gdx.app.getApplicationListener();
+            myGdxGame =(MyGdxGame) applicationListener;
+            if(frameCount<skeletonSet.size()){
+                myGdxGame.setData(skeletonSet.get(frameCount));
+            }
 
+//            if(timeCounter+1!=skeletonSet.size()){
+//                timeCounter = timeCounter + 1;
+//            }
+//            else{
+//                timeCounter = 0;
+//            }
+            frameCount++;
 
         } catch(Exception ex) {};
 
