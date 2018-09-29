@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center">
         <TextureView
-            android:id="@+id/texture_video_previewer_surface"
+            android:id="@+id/video_view_surface"
             android:layout_width="320dp"
             android:layout_height="240dp"
             android:layout_centerInParent="true"
@@ -26,6 +26,7 @@
             android:layout_height="240dp"
             android:layout_centerInParent="true"
             android:layout_gravity="center" />
+
 
     </FrameLayout>
 

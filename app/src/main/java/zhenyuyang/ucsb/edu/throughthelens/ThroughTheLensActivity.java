@@ -3,15 +3,21 @@ package zhenyuyang.ucsb.edu.throughthelens;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.SurfaceTexture;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -19,6 +25,7 @@ import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 import com.mygdx.game.MyGdxGame;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -55,7 +62,10 @@ import zhenyuyang.ucsb.edu.throughthelens.utils.DJIModuleVerificationUtil;
 
 
 
-public class ThroughTheLensActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener,  AndroidFragmentApplication.Callbacks{
+public class ThroughTheLensActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener,  AndroidFragmentApplication.Callbacks,MediaPlayer.OnBufferingUpdateListener,
+        MediaPlayer.OnCompletionListener,
+        MediaPlayer.OnPreparedListener,
+        MediaPlayer.OnVideoSizeChangedListener {
     private TextureView mVideoSurface = null;
     private TextView responseTextView = null;
     private TextView textView_test = null;
@@ -93,6 +103,7 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
     MyGdxGame myGdxGame;
 
 
+    private MediaPlayer mp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,7 +162,24 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
 
     private void initUI() {
 
-        mVideoSurface = (TextureView) findViewById(R.id.texture_video_previewer_surface);
+        mVideoSurface = (TextureView) findViewById(R.id.video_view_surface);
+//        //Video Loop
+//        mVideoSurface.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//            public void onCompletion(MediaPlayer mp) {
+//                mVideoSurface.start(); //need to make transition seamless.
+//            }
+//        });
+//
+//
+//
+//        //Uri uri = Uri.fromFile(new File("//assets/big_buck_bunny.mp4"));
+//        //mVideoSurface.setVideoURI(uri);
+//        mVideoSurface.setVideoURI(Uri.parse(Uri.decode("http://zhenyuyang.usite.pro/testVideo.mp4")));
+//
+//        mVideoSurface.requestFocus();
+//        mVideoSurface.start();
+
+
         textView_test = (TextView)findViewById(R.id.textView_test);
         button_sendWayPoint = (Button)findViewById(R.id.button_sendWayPoint);
         button_previewWayPoint = (Button)findViewById(R.id.button_previeWayPoint);
@@ -264,71 +292,52 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
                 }
             };
         }
-        //initSDKCallback();
-
-
-
-
-//        DJIAircraft mAircraft = (DJIAircraft) DJISDKManager.getInstance().getDJIProduct();
-//        DJIFlightController mFlightController = mAircraft.getFlightController();
-//        mFlightController.setReceiveExternalDeviceDataCallback(new DJIFlightControllerDelegate.FlightControllerReceivedDataFromExternalDeviceCallback() {
-//            @Override
-//            public void onResult(byte[] data) {
-//                float[] dataTemp = toFloatArray(data);
-//
-//                if(dataTemp[0]>0){
-//                    for(int i = 1;i<22;i++){
-//                        skeleton[i-1] = dataTemp[i];
-//                    }
-//                }
-//                else{
-//                    for(int i = 1;i<22;i++){
-//                        skeleton[21+i-1] = dataTemp[i];
-//                    }
-//                }
-//
-//
-//
-//
-////                ((EditText)findViewById(R.id.debug)).setText("data = "+builder.toString());
-//                if(dataTemp[0]<0){
-//
-//                    ApplicationListener applicationListener = Gdx.app.getApplicationListener();
-//                    myGdxGame =(MyGdxGame) applicationListener;
-//                    myGdxGame.setData(skeleton);
-//
-//                    //textView_test.setText("data = "+data.toString());
-//                    String test = "";
-//                    for(int i = 0;i<skeleton.length;i++){
-//                        test+=skeleton[i]+",";
-//                    }
-//                    //textView_test.setText("test = "+test);
-//
-//
-//                }
-//
-//            }
-//        });
-    }
-
-    private void initSDKCallback() {
-        try {
-            mProduct = DJIApplication.getProductInstance();
-
-            if (mProduct.getModel() != Model.UnknownAircraft) {
-                mProduct.getCamera().setDJICameraReceivedVideoDataCallback(mReceivedVideoDataCallback);
-
-            } else {
-                mProduct.getAirLink().getLBAirLink().setDJIOnReceivedVideoCallback(mOnReceivedVideoCallback);
-            }
-        } catch (Exception exception) {}
     }
 
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        if (mCodecManager == null) {
-            mCodecManager = new DJICodecManager(getApplicationContext(), surface, width, height);
+//        if (mCodecManager == null) {
+//            mCodecManager = new DJICodecManager(getApplicationContext(), surface, width, height);
+//        }
 
+        Surface s = new Surface(surface);
+
+        try
+        {
+            mp = new MediaPlayer();
+            String MY_VIDEO = "http://zhenyuyang.usite.pro/testVideo.mp4";
+            mp.setDataSource(MY_VIDEO);
+            mp.setSurface(s);
+            mp.prepare();
+
+            mp.setOnBufferingUpdateListener(this);
+            mp.setOnCompletionListener(this);
+            mp.setOnPreparedListener(this);
+            mp.setOnVideoSizeChangedListener(this);
+
+            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mp.start();
+
+            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    mp.start();
+                }
+            });
+
+        }
+        catch (IllegalArgumentException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 
@@ -352,15 +361,15 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
         try {
             //Utils.setResultToToast(getContext(), "tsurface = "+surface.getTimestamp());
 
-            int p = mVideoSurface.getBitmap().getPixel(200,200);
-
-            int R = (p >> 16) & 0xff;
-            int G = (p >> 8) & 0xff;
-            int B = p & 0xff;
+//            int p = mVideoSurface.getBitmap().getPixel(200,200);
+//
+//            int R = (p >> 16) & 0xff;
+//            int G = (p >> 8) & 0xff;
+//            int B = p & 0xff;
             //textView_test.setText("R = "+R+", G = "+G+", B = "+B);
             //setResultToToast(getContext(), "mVideoSurface = "+mVideoSurface);
 
-
+            Log.i("video","onSurfaceTextureUpdated");
 
 
 
@@ -395,6 +404,26 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
 
     @Override
     public void exit() {
+
+    }
+
+    @Override
+    public void onBufferingUpdate(MediaPlayer mediaPlayer, int i) {
+
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mediaPlayer) {
+
+    }
+
+    @Override
+    public void onPrepared(MediaPlayer mediaPlayer) {
+
+    }
+
+    @Override
+    public void onVideoSizeChanged(MediaPlayer mediaPlayer, int i, int i1) {
 
     }
 }
