@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements AndroidFragmentAp
 			@Override
 			public void onClick(View v) {
 				//Log.i(TAG,"mBtnOpen onClick");
-				Toast.makeText(getApplicationContext(), "mBtnOpen onClick", Toast.LENGTH_SHORT).show();
+				//Toast.makeText(getApplicationContext(), "mBtnOpen onClick", Toast.LENGTH_SHORT).show();
 				Intent intent = new Intent(getApplicationContext(),ThroughTheLensActivity.class);
 				startActivity(intent);
 
