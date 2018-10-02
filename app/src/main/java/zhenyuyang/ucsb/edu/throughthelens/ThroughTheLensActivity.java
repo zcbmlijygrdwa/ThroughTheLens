@@ -160,6 +160,8 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
     private void initUI() {
 
         mVideoSurface = (TextureView) findViewById(R.id.video_view_surface);
+        mVideoSurface.setVisibility(View.VISIBLE);
+        mVideoSurface.setSurfaceTextureListener(this);
         textView_test = (TextView)findViewById(R.id.textView_test);
         button_sendWayPoint = (Button)findViewById(R.id.button_sendWayPoint);
         button_previewWayPoint = (Button)findViewById(R.id.button_previeWayPoint);
@@ -178,15 +180,18 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
             @Override
             public void onClick(View v) {
 
+
+
                 try {
+
                     ApplicationListener applicationListener = Gdx.app.getApplicationListener();
                     myGdxGame =(MyGdxGame) applicationListener;
                     if(frameCount<skeletonSet.size()){
                         myGdxGame.setData(skeletonSet.get(frameCount));
                     }
-                    frameCount++;
-
-                } catch(Exception ex) {};
+                } catch(Exception ex) {
+                    Log.i("TTL","error = "+ex.toString());
+                };
 
             }
         });
@@ -249,30 +254,6 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
                 }
 
         });
-
-
-//        if (null != mVideoSurface) {
-//            mVideoSurface.setSurfaceTextureListener(this);
-//
-//            // This callback is for
-//            mOnReceivedVideoCallback = new DJILBAirLink.DJIOnReceivedVideoCallback() {
-//                @Override
-//                public void onResult(byte[] videoBuffer, int size) {
-//                    if (mCodecManager != null) {
-//                        mCodecManager.sendDataToDecoder(videoBuffer, size);
-//                    }
-//                }
-//            };
-//
-//            mReceivedVideoDataCallback = new DJICamera.CameraReceivedVideoDataCallback() {
-//                @Override
-//                public void onResult(byte[] videoBuffer, int size) {
-//                    if (null != mCodecManager) {
-//                        mCodecManager.sendDataToDecoder(videoBuffer, size);
-//                    }
-//                }
-//            };
-//        }
     }
 
     @Override
@@ -281,13 +262,15 @@ public class ThroughTheLensActivity extends AppCompatActivity implements Texture
 //            mCodecManager = new DJICodecManager(getApplicationContext(), surface, width, height);
 //        }
 
+
+
         Surface s = new Surface(surface);
 
         try
         {
             mp = new MediaPlayer();
             String MY_VIDEO = "http://zhenyuyang.usite.pro/testVideo.mp4";
-            // String MY_VIDEO = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
+            //String MY_VIDEO = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
             mp.setDataSource(MY_VIDEO);
             mp.setSurface(s);
             mp.prepare();

@@ -161,7 +161,7 @@ public class MyGdxGame extends ApplicationAdapter{
 		float translationScale = 12f;
 		for(int i = 0; i<14;i++){
 			instanceSphere = new ModelInstance(modelSphere);
-			instanceSphere.transform.scale(1f,1f,1f);
+			//instanceSphere.transform.scale(1f,1f,1f);
 			instanceSkeleton.add(instanceSphere);
 		}
 
@@ -170,7 +170,7 @@ public class MyGdxGame extends ApplicationAdapter{
 		}
 
 
-		Gdx.gl.glLineWidth(32);
+		//Gdx.gl.glLineWidth(32);
 		ModelBuilder modelBuilder = new ModelBuilder();
 		modelBuilder.begin();
 		MeshPartBuilder builder = modelBuilder.part("line", 1, 3, new Material());
@@ -231,7 +231,7 @@ public class MyGdxGame extends ApplicationAdapter{
 
 		Model lineModel = modelBuilder.end();
 		ModelInstance lineInstance = new ModelInstance(lineModel);
-		lineInstance.transform.scale(1f,1f,1f);
+		//lineInstance.transform.scale(1f,1f,1f);
 
 
 		//Gdx.gl.glClearColor(testRed, 0, 100, 100);
