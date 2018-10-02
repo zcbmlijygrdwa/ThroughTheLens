@@ -3,21 +3,26 @@ package com.mygdx.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.loaders.ModelLoader;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
+import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.FirstOrderInputProcessor;
+//import com.mygdx.game.FirstOrderInputProcessor;
 
 import java.util.ArrayList;
 
@@ -82,7 +87,7 @@ public class MyGdxGame extends ApplicationAdapter{
 		// set the near and far planes of the camera to 1 and 300
 		// update the camera
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		cam.position.set(100f, 100f, 100f);
+		cam.position.set(80f, 80f, 80f);
 		cam.lookAt(0,0,0);
 		cam.near  = 1f;
 		cam.far = 300f;
@@ -94,51 +99,45 @@ public class MyGdxGame extends ApplicationAdapter{
 		model = modelLoader.loadModel(Gdx.files.internal("stormtrooper.obj"));
 		modelSphere = modelLoader.loadModel(Gdx.files.internal("sphere.obj"));
 
-
-
-
-		instance = new ModelInstance(model);
-		instance.transform.scale(0.2f,0.2f,0.2f);
-
-		for(int i = 0; i<14;i++){
-			instanceSphere = new ModelInstance(modelSphere);
-			instanceSphere.transform.scale(1f,1f,1f);
-			instanceSkeleton.add(instanceSphere);
-		}
-
-		for(int i = 0; i<14;i++){
-			instanceSkeleton.get(i).transform.translate(2*(float)data[frameCount*42+i],0,0);
-		}
-
-		for(int i = 14; i<28;i++){
-			instanceSkeleton.get(i-14).transform.translate(0,-2*(float)data[frameCount*42+i],0);
-		}
-
-		for(int i = 28; i<42;i++){
-			instanceSkeleton.get(i-28).transform.translate(0,0,2*(float)data[frameCount*42+i]);
-		}
-
-		if(frameCount<=50){
-			frameCount++;
-		}
-		else{
-			frameCount = 0;
-		}
+//
+//
+//
+//		instance = new ModelInstance(model);
+//		instance.transform.scale(0.2f,0.2f,0.2f);
+//
+//		for(int i = 0; i<14;i++){
+//			instanceSphere = new ModelInstance(modelSphere);
+//			instanceSphere.transform.scale(1f,1f,1f);
+//			instanceSkeleton.add(instanceSphere);
+//		}
+//
+//		for(int i = 0; i<14;i++){
+//			instanceSkeleton.get(i).transform.translate(2*(float)data[frameCount*42+i],0,0);
+//		}
+//
+//		for(int i = 14; i<28;i++){
+//			instanceSkeleton.get(i-14).transform.translate(0,-2*(float)data[frameCount*42+i],0);
+//		}
+//
+//		for(int i = 28; i<42;i++){
+//			instanceSkeleton.get(i-28).transform.translate(0,0,2*(float)data[frameCount*42+i]);
+//		}
+//
+//		if(frameCount<=50){
+//			frameCount++;
+//		}
+//		else{
+//			frameCount = 0;
+//		}
 
 		//instance.materials.get(0).set(ColorAttribute.createDiffuse(Color.BLACK));
 
 		// set the input processor to work with our custom input:
 		//  clicking the image in the lower right should change the colors of the helmets
 		//  bonus points: implement your own GestureDetector and an input processor based on it
-        Gdx.input.setInputProcessor(new FirstOrderInputProcessor(cam, new Runnable() {
-            public void run() {
-                // TODO: change the helmet details material to a new diffuse random color
-
-                // bonus points:
-                //  randomly change the material of the helmet base to a texture
-                //  from the files aloha.png and camouflage.png (or add your own!)
-            }
-        }));
+		CameraInputController cameraInputController = new CameraInputController(cam);
+		cameraInputController.pinchZoomFactor = 80f;
+        Gdx.input.setInputProcessor(cameraInputController);
 
 
 //		batch = new SpriteBatch();
@@ -159,38 +158,84 @@ public class MyGdxGame extends ApplicationAdapter{
 	public void render () {
 
 
+		float translationScale = 12f;
 		for(int i = 0; i<14;i++){
 			instanceSphere = new ModelInstance(modelSphere);
-			instanceSphere.transform.scale(4f,4f,4f);
+			instanceSphere.transform.scale(1f,1f,1f);
 			instanceSkeleton.add(instanceSphere);
 		}
 
 		for(int i = 0; i<14;i++){
-			instanceSkeleton.get(i).transform.translate(2*(float)data[i],0,0);
+			instanceSkeleton.get(i).transform.translate(translationScale*(float)data[i],-translationScale*(float)data[i+14],translationScale * (float) data[i+28]);
 		}
 
-		for(int i = 14; i<28;i++){
-			instanceSkeleton.get(i-14).transform.translate(0,-2*(float)data[i],0);
-		}
 
-		for(int i = 28; i<42;i++){
-			instanceSkeleton.get(i-28).transform.translate(0,0,2*(float)data[i]);
-		}
+		Gdx.gl.glLineWidth(32);
+		ModelBuilder modelBuilder = new ModelBuilder();
+		modelBuilder.begin();
+		MeshPartBuilder builder = modelBuilder.part("line", 1, 3, new Material());
+		builder.setColor(Color.RED);
 
-//        if(frameCount<=50){
-//            frameCount++;
-//        }
-//        else{
-//            frameCount = 0;
-//        }
+		//add lines
+		int start = 0;
+		int end = 1;
+		builder.line(translationScale*(float)data[start], -translationScale*(float)data[start+14], translationScale * (float) data[start+28], translationScale*(float)data[end], -translationScale*(float)data[end+14], translationScale * (float) data[end+28]);
 
+		start = 1;
+		end = 2;
+		builder.line(translationScale*(float)data[start], -translationScale*(float)data[start+14], translationScale * (float) data[start+28], translationScale*(float)data[end], -translationScale*(float)data[end+14], translationScale * (float) data[end+28]);
 
+		start = 3;
+		end = 4;
+		builder.line(translationScale*(float)data[start], -translationScale*(float)data[start+14], translationScale * (float) data[start+28], translationScale*(float)data[end], -translationScale*(float)data[end+14], translationScale * (float) data[end+28]);
 
+		start = 4;
+		end = 5;
+		builder.line(translationScale*(float)data[start], -translationScale*(float)data[start+14], translationScale * (float) data[start+28], translationScale*(float)data[end], -translationScale*(float)data[end+14], translationScale * (float) data[end+28]);
 
+		start = 6;
+		end = 3;
+		builder.line(translationScale*(float)data[start], -translationScale*(float)data[start+14], translationScale * (float) data[start+28], translationScale*(float)data[end], -translationScale*(float)data[end+14], translationScale * (float) data[end+28]);
+
+		start = 6;
+		end = 7;
+		builder.line(translationScale*(float)data[start], -translationScale*(float)data[start+14], translationScale * (float) data[start+28], translationScale*(float)data[end], -translationScale*(float)data[end+14], translationScale * (float) data[end+28]);
+
+		start = 6;
+		end = 8;
+		builder.line(translationScale*(float)data[start], -translationScale*(float)data[start+14], translationScale * (float) data[start+28], translationScale*(float)data[end], -translationScale*(float)data[end+14], translationScale * (float) data[end+28]);
+
+		start = 8;
+		end = 9;
+		builder.line(translationScale*(float)data[start], -translationScale*(float)data[start+14], translationScale * (float) data[start+28], translationScale*(float)data[end], -translationScale*(float)data[end+14], translationScale * (float) data[end+28]);
+
+		start = 9;
+		end = 10;
+		builder.line(translationScale*(float)data[start], -translationScale*(float)data[start+14], translationScale * (float) data[start+28], translationScale*(float)data[end], -translationScale*(float)data[end+14], translationScale * (float) data[end+28]);
+
+		start = 6;
+		end = 11;
+		builder.line(translationScale*(float)data[start], -translationScale*(float)data[start+14], translationScale * (float) data[start+28], translationScale*(float)data[end], -translationScale*(float)data[end+14], translationScale * (float) data[end+28]);
+
+		start = 11;
+		end = 12;
+		builder.line(translationScale*(float)data[start], -translationScale*(float)data[start+14], translationScale * (float) data[start+28], translationScale*(float)data[end], -translationScale*(float)data[end+14], translationScale * (float) data[end+28]);
+
+		start = 12;
+		end = 13;
+		builder.line(translationScale*(float)data[start], -translationScale*(float)data[start+14], translationScale * (float) data[start+28], translationScale*(float)data[end], -translationScale*(float)data[end+14], translationScale * (float) data[end+28]);
+
+		start = 6;
+		end = 0;
+		builder.line(translationScale*(float)data[start], -translationScale*(float)data[start+14], translationScale * (float) data[start+28], translationScale*(float)data[end], -translationScale*(float)data[end+14], translationScale * (float) data[end+28]);
+
+		Model lineModel = modelBuilder.end();
+		ModelInstance lineInstance = new ModelInstance(lineModel);
+		lineInstance.transform.scale(1f,1f,1f);
 
 
 		//Gdx.gl.glClearColor(testRed, 0, 100, 100);
-		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 100);
+		Gdx.gl.glClearColor(0.3f, 0.3f, 0.3f, 100);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		//System.out.println("cam.position = "+cam.position.toString());
@@ -210,6 +255,7 @@ public class MyGdxGame extends ApplicationAdapter{
 		modelBatch.begin(cam);
 		//modelBatch.render(instance, environment);
 		modelBatch.render(instanceSkeleton, environment);
+		modelBatch.render(lineInstance,environment);
 		modelBatch.end();
 
 
